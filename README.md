@@ -1,4 +1,5 @@
-Obtém dados do site http://www.ssp.sp.gov.br/transparenciassp/
+Obtém dados do site http://www.ssp.sp.gov.br/transparenciassp/.
+
 Os arquivos são disponibilizados mensalmente.
 
 Segue um exemplo de como usar a classe:
