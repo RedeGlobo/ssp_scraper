@@ -2,7 +2,7 @@
 #!/usr/bin/env python
 
 __author__ = "Rodrigo Esteves e Priscilla Lusie"
-__version__ = "1.0.0"
+__version__ = "1.0"
 
 import logging
 import os
