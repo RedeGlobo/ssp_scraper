@@ -137,8 +137,6 @@ class SSP_Scraper:
             for m in months[::-1]:
                 mes = re.search('(\d+)', m)
                 mes = int(mes.group(1)) if mes else m
-                buttonElement = self._wait.until(EC.visibility_of_element_located((By.ID, m)))
-                self._driver.execute_script('arguments[0].click()', buttonElement)
 
                 processed = self.check_downloaded_file(crime_name, ano, mes)
                 if processed:
@@ -146,6 +144,9 @@ class SSP_Scraper:
                         self.log.debug('Arquivo já existe: base={} ano={} mes={}'.format(crime_name, ano, mes))
                     #return
                     continue
+
+                buttonElement = self._wait.until(EC.visibility_of_element_located((By.ID, m)))
+                self._driver.execute_script('arguments[0].click()', buttonElement)
 
                # on the IML element of the crime buttons list, the "exportar" has a different id
                 if crime_name == 'IML':
