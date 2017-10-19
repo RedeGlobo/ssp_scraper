@@ -71,15 +71,16 @@ class SSP_Scraper:
             Note:
                 A página deve ter sido carregada previamente.
             Returns:
-                Vetor de crimes cujos dados estão disponíveis para download
+                Vetor de tuplas de crimes(id do botão, nome do crime) cujos dados estão disponíveis para download
         """
         crimes = []
         itens = self._driver.find_elements_by_xpath(self.crime_xpath)
         for i in itens:
+            name = i.get_attribute('text')
             id = i.get_attribute('id')
             if id.find('cphBody_btnTaxaHomicidio') != -1:
                 continue
-            crimes.append(id)
+            crimes.append((id, name))
         return crimes
 
     def __get_available_periods(self):
@@ -142,14 +143,13 @@ class SSP_Scraper:
                 if processed:
                     if self.log:
                         self.log.debug('Arquivo já existe: base={} ano={} mes={}'.format(crime_name, ano, mes))
-                    #return
                     continue
 
                 buttonElement = self._wait.until(EC.visibility_of_element_located((By.ID, m)))
                 self._driver.execute_script('arguments[0].click()', buttonElement)
 
                # on the IML element of the crime buttons list, the "exportar" has a different id
-                if crime_name == 'IML':
+                if crime_name.find('IML') != -1:
                     exportar_id = "cphBody_ExportarIMLButton"
                 else:
                     exportar_id = "cphBody_ExportarBOLink"
@@ -192,35 +192,32 @@ class SSP_Scraper:
         
         if self.log:
             self.log.debug('Encontradas {} ocorrências'.format(len(crime_elements)))
-        for crime in crime_elements[::-1]:
-            crime_name = re.search('btn(\w+)', crime)
-            if crime_name:
-                crime_name = crime_name.group(1)
-            else:
-                crime_name = crime
-            crime_name = crime_name.replace('Homicicio', 'Homicidio')
-
+        for crime, crime_name in crime_elements:
             buttonElement = self._wait.until(EC.visibility_of_element_located((By.ID, crime)))
             self._driver.execute_script('arguments[0].click()', buttonElement)
 
-            if crime_name == 'MorteSuspeita':
+            if crime_name.lower() == 'morte suspeita':
                 # "Morte suspeita" needs an special treatment, 
                 suspiciousDeath = self._driver.find_elements_by_xpath(self.suspiciousDeath_xpath)
                 suspiciousDeaths = []
                 for s in suspiciousDeath:
                     sType_text = s.get_attribute("text")
                     sType = s.get_attribute("id")
+
+                    name = re.search('- (.+)', sType_text)
+                    if name and name.group(1).strip():
+                        sType_text = name.group(1)
                     suspiciousDeaths.append((sType_text, sType))
 
-                for s in suspiciousDeaths:
+                for s_text, s_id in suspiciousDeaths:
                     if self.log:
                         self.log.debug('\n################################\nProcessando ' + crime_name + 
-                                       ' - ' +s[0] + '\n################################\n')
+                                       ' - ' + s_text + '\n################################\n')
 
-                    buttonElement = self._wait.until(EC.visibility_of_element_located((By.ID, s[1])))
+                    buttonElement = self._wait.until(EC.visibility_of_element_located((By.ID, s_id)))
                     self._driver.execute_script('arguments[0].click()', buttonElement)
 
-                    self.__get_files_from_crime(crime_name + ' ' + s[0])
+                    self.__get_files_from_crime(crime_name + '/' + s_text)
             else:
                 if self.log:
                     self.log.debug('\n################################\nProcessando ' + 
