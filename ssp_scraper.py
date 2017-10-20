@@ -162,6 +162,8 @@ class SSP_Scraper:
                         self.log.debug('Salvando base={} ano={} mes={}'.format(crime_name, ano, mes))
                     #self._driver.execute_async_script(buttonRef)
                     self._driver.execute_script(buttonRef)
+                    self.process_downloaded_file(crime_name, ano, mes)
+
                 except:
                     e = sys.exc_info()
                     if self.log:
@@ -170,6 +172,8 @@ class SSP_Scraper:
     def check_downloaded_file(self, crime_name, ano, mes):
         """  Recebe o nome do crime e o período relativo ao arquivo para que seja conferido se o download 
          do arquivo já foi feito ou não.
+         Note:
+            A classe deve ser derivada e o método sobrescrito.
          Args:
             crime_name (str): nome do crime relativo ao arquivo
             ano (int): ano referente ao arquivo
@@ -178,6 +182,18 @@ class SSP_Scraper:
              True se o arquivo já foi processado anteriormente, caso contrário, False.
         """
         return False
+
+    def process_downloaded_file(self, crime_name, ano, mes):
+        """  Processa o último arquivo que foi baixado retirando o caracter nulo que dava problemas na 
+             manipulação do arquivo.
+         Note:
+            A classe deve ser derivada e o método sobrescrito.
+         Args:
+            crime_name (str): nome do crime relativo ao arquivo
+            ano (int): ano referente ao arquivo
+            mes (int): mês referente ao arquivo
+        """
+        return
 
     def process_crimes(self):
         """ Processa cada um dos crimes obtidos em get_crime_elements.
