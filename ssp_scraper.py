@@ -18,8 +18,8 @@ from selenium.common.exceptions import TimeoutException
 
 
 class SSP_Scraper:
-    """ 
-        Classe para download dos arquivos relativos a diversos crimes presentes 
+    """
+        Classe para download dos arquivos relativos a diversos crimes presentes
         na página da Secretaria de Segurança Pública de SP (SSP).
         Usa o selenium para selecionar o crime e o período desejado na página do SSP,
         permitindo que o download seja feito ao clicar no botão exportar.
@@ -55,7 +55,7 @@ class SSP_Scraper:
                 Uma instância do driver do chrome
         """
         chromeOptions = webdriver.ChromeOptions()
-        prefs = {'download.default_directory' : download_dir, 
+        prefs = {'download.default_directory' : download_dir,
                  'profile.default_content_setting_values.automatic_downloads': 1}
         chromeOptions.add_experimental_option("prefs",prefs)
         #chromeOptions.add_argument("--dns-prefetch-disable")
@@ -67,7 +67,7 @@ class SSP_Scraper:
         return driver
 
     def __get_crime_elements(self):
-        """ Extrai os botões válidos de crimes a serem explorados. 
+        """ Extrai os botões válidos de crimes a serem explorados.
             Note:
                 A página deve ter sido carregada previamente.
             Returns:
@@ -94,7 +94,7 @@ class SSP_Scraper:
         yearsRef = []
         for y in years:
              yearsRef.append(y.get_attribute('id'))
-        
+
         monthsRef = []
         for m in months:
              monthsRef.append(m.get_attribute('id'))
@@ -170,7 +170,7 @@ class SSP_Scraper:
                         self.log.error(e)
 
     def check_downloaded_file(self, crime_name, ano, mes):
-        """  Recebe o nome do crime e o período relativo ao arquivo para que seja conferido se o download 
+        """  Recebe o nome do crime e o período relativo ao arquivo para que seja conferido se o download
          do arquivo já foi feito ou não.
          Note:
             A classe deve ser derivada e o método sobrescrito.
@@ -183,15 +183,13 @@ class SSP_Scraper:
         """
         return False
 
-    def process_downloaded_file(self, crime_name, ano, mes):
-        """  Processa o último arquivo que foi baixado retirando o caracter nulo que dava problemas na 
+    def process_downloaded_file(self, crime_name):
+        """  Processa o último arquivo que foi baixado retirando o caracter nulo que dava problemas na
              manipulação do arquivo.
          Note:
             A classe deve ser derivada e o método sobrescrito.
          Args:
             crime_name (str): nome do crime relativo ao arquivo
-            ano (int): ano referente ao arquivo
-            mes (int): mês referente ao arquivo
         """
         return
 
@@ -205,7 +203,7 @@ class SSP_Scraper:
         if self.log:
             self.log.debug('A buscar dados')
         crime_elements = self.__get_crime_elements()
-        
+
         if self.log:
             self.log.debug('Encontradas {} ocorrências'.format(len(crime_elements)))
         for crime, crime_name in crime_elements:
@@ -213,7 +211,7 @@ class SSP_Scraper:
             self._driver.execute_script('arguments[0].click()', buttonElement)
 
             if crime_name.lower() == 'morte suspeita':
-                # "Morte suspeita" needs an special treatment, 
+                # "Morte suspeita" needs an special treatment,
                 suspiciousDeath = self._driver.find_elements_by_xpath(self.suspiciousDeath_xpath)
                 suspiciousDeaths = []
                 for s in suspiciousDeath:
@@ -227,7 +225,7 @@ class SSP_Scraper:
 
                 for s_text, s_id in suspiciousDeaths:
                     if self.log:
-                        self.log.debug('\n################################\nProcessando ' + crime_name + 
+                        self.log.debug('\n################################\nProcessando ' + crime_name +
                                        ' - ' + s_text + '\n################################\n')
 
                     buttonElement = self._wait.until(EC.visibility_of_element_located((By.ID, s_id)))
@@ -236,7 +234,7 @@ class SSP_Scraper:
                     self.__get_files_from_crime(crime_name + '/' + s_text)
             else:
                 if self.log:
-                    self.log.debug('\n################################\nProcessando ' + 
+                    self.log.debug('\n################################\nProcessando ' +
                                    crime_name + '\n################################\n')
 
                 self.__get_files_from_crime(crime_name)
