@@ -162,7 +162,7 @@ class SSP_Scraper:
                         self.log.debug('Salvando base={} ano={} mes={}'.format(crime_name, ano, mes))
                     #self._driver.execute_async_script(buttonRef)
                     self._driver.execute_script(buttonRef)
-                    self.process_downloaded_file(crime_name, ano, mes)
+                    self.process_downloaded_file(crime_name)
 
                 except:
                     e = sys.exc_info()
