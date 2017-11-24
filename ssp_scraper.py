@@ -31,12 +31,12 @@ class SSP_Scraper:
     suspiciousDeath_xpath = '//div[@class="col-lg-3 col-md-3 col-sm-3 col-xs-3 nopadd centered"]'+\
                             '//a[@class="btnItem dynWidth block" or @class="btnItem2 dynWidth block"]'
 
-    def __init__(self, download_dir, timeout=900, log=None):
+    def __init__(self, download_dir, chromedriver_dir, timeout=900, log=None):
         self.download_dir = download_dir
         self.timeout = timeout
         self.log = log
 
-        self._driver = self.__get_chrome_driver(self.download_dir, self.timeout)
+        self._driver = self.__get_chrome_driver(self.download_dir, chromedriver_dir, self.timeout)
         self._wait = WebDriverWait(self._driver, self.timeout)
         self._driver.get(self.url)
 
@@ -46,10 +46,11 @@ class SSP_Scraper:
         self._driver.close()
 
     @staticmethod
-    def __get_chrome_driver(download_dir, timeout):
+    def __get_chrome_driver(download_dir, chromedriver_dir, timeout):
         """ Inicializa o driver do chrome para a navegação Web na página do SSP de SP.
             Args:
                 download_dir (str): diretório para download dos arquivos
+                chromedriver_dir (str): diretório onde o driver do chrome se localiza
                 timeout (int): tempo em segundos para que espere a resposta de uma execução do javascript presente na página web
             Returns:
                 Uma instância do driver do chrome
@@ -60,7 +61,7 @@ class SSP_Scraper:
         chromeOptions.add_experimental_option("prefs",prefs)
         #chromeOptions.add_argument("--dns-prefetch-disable")
         #chromeOptions.add_argument('headless')
-        driver = webdriver.Chrome(chrome_options=chromeOptions)
+        driver = webdriver.Chrome(chromedriver_dir, chrome_options=chromeOptions)
         driver.set_script_timeout(timeout)
         driver.set_page_load_timeout(timeout)
         driver.implicitly_wait(timeout)
