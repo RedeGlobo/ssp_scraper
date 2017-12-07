@@ -2,7 +2,7 @@ Obtém dados do site http://www.ssp.sp.gov.br/transparenciassp/.
 
 Os arquivos são disponibilizados mensalmente.
 
-#Fluxo:
+# Fluxo:
 ![alt text](img/SSPDiagram.jpg)
 
 Segue um exemplo de como usar a classe:
@@ -20,7 +20,7 @@ except:
     log.error(sys.exc_info())
 ```
 
-#Dependência:
+# Dependência:
 Baixar navegador google chrome em:
 https://www.google.com/chrome/browser/desktop/index.html
 
