@@ -6,7 +6,7 @@
 # Copyright (c) 2017 Rede Globo
 
 __author__ = "Rodrigo Esteves e Priscilla Lusie"
-__version__ = "1.0.1"
+__version__ = "1.4"
 
 import logging
 import os
